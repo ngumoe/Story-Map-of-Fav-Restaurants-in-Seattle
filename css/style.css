@@ -29,7 +29,7 @@ html, body {
     z-index: 1;
 }
 
-/* Cover page */
+/* COVER PAGE */
 #cover {
     width: 100%;
     height: 100vh;
@@ -87,101 +87,90 @@ html, body {
     margin-left: 1rem;
 }
 
-/* Geonarrative section */
+/* GEONARRATIVE SECTION */
 #geonarrative {
     position: relative;
     z-index: 5;
     background: transparent;
 }
 
-/* Scene articles */
+/* SCENE PANELS (left-aligned, light background) */
 .scene {
-  position: relative;
-  max-width: 40rem;
-  margin: 0 0 0 4rem;      /* left-aligned */
-  padding: 2rem 1.5rem;
-  color: #fff;
-  background: rgba(20, 20, 20, 0.7);
-  backdrop-filter: blur(5px);
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-  border-left: 5px solid #f0c15a;
-  margin-bottom: 70vh;      /* space between scenes */
-  transition: transform 0.3s;
+    position: relative;
+    max-width: 420px;           /* wider for readability */
+    margin: 0 0 0 4rem;         /* left side */
+    padding: 1.8rem 2rem;
+    background: rgba(255, 255, 255, 0.9); /* light background */
+    backdrop-filter: blur(2px);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border-left: 6px solid #d4a373; /* accent color */
+    margin-bottom: 70vh;         /* space between scenes */
+    transition: transform 0.3s;
+    color: #2c3e50;              /* dark text for contrast */
 }
 
 .scene:first-child {
-  margin-top: 20vh;         /* start below cover */
+    margin-top: 20vh;            /* start below cover */
 }
 
 .scene:last-child {
-  margin-bottom: 20vh;
+    margin-bottom: 20vh;
 }
 
-/* Optional: adjust for mobile */
-@media (max-width: 768px) {
-  .scene {
-    margin: 0 auto 70vh auto;
-    max-width: 90%;
-  }
-}
 .scene-content h2 {
     margin-top: 0;
-    color: #f0c15a;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
     font-weight: 500;
-    border-bottom: 1px solid #444;
-    padding-bottom: 0.5rem;
+    color: #1e3c5c;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.4rem;
 }
 
 .scene-content .cuisine {
-    font-size: 0.9rem;
-    color: #ccc;
+    font-size: 1rem;
+    color: #5a6b7a;
     margin-bottom: 1rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .scene-content .cuisine i {
-    margin-right: 0.3rem;
+    color: #d4a373;
 }
 
-.scene-img {
-    width: 100%;
-    max-height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin: 1rem 0;
-    border: 3px solid rgba(255,255,255,0.2);
+.scene-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    margin-bottom: 0.8rem;
 }
 
 .scene-content .address {
-    font-size: 0.9rem;
-    color: #aaa;
+    font-size: 0.95rem;
+    color: #5a6b7a;
     margin-top: 0.5rem;
     font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .scene-content .address i {
-    margin-right: 0.3rem;
-    color: #f0c15a;
+    color: #d4a373;
 }
 
-/* Custom scene adjustments if needed */
-[data-scene="0"] {
-    border-left-color: #e76f51;
-}
-[data-scene="1"] {
-    border-left-color: #f4a261;
-}
-[data-scene="2"] {
-    border-left-color: #e9c46a;
-}
-[data-scene="3"] {
-    border-left-color: #2a9d8f;
-}
-[data-scene="4"] {
-    border-left-color: #287271;
-}
+/* Optional: different border colors for each scene */
+[data-scene="0"] { border-left-color: #e76f51; }
+[data-scene="1"] { border-left-color: #f4a261; }
+[data-scene="2"] { border-left-color: #e9c46a; }
+[data-scene="3"] { border-left-color: #2a9d8f; }
+[data-scene="4"] { border-left-color: #287271; }
 
-/* Footer */
+/* FOOTER */
 #footer {
     background: #1a1a1a;
     color: #bbb;
@@ -195,7 +184,7 @@ html, body {
     text-decoration: none;
 }
 #footer a:hover {
-    color: #f0c15a;
+    color: #d4a373;
 }
 
 /* Responsive: on small screens, center the panel */
@@ -211,4 +200,15 @@ html, body {
     #intro h1 {
         font-size: 2rem;
     }
+}
+
+/* Popup styling (optional) */
+.mapboxgl-popup-content {
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    font-family: 'Fira Sans', sans-serif;
+}
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+    border-top-color: white;
 }
