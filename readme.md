@@ -6,7 +6,7 @@ An interactive geo‑narrative exploring my favorite restaurants in Seattle. Bui
 
 ## Features
 - Full‑screen cover with background image
-- Sticky map that changes as you scroll
+- Sticky map that changes with each scroll
 - Five scenes, each highlighting a restaurant
 - Custom map markers and restaurant photos
 - Two different map styles (Streets, Light, Satellite Streets)
@@ -14,6 +14,6 @@ An interactive geo‑narrative exploring my favorite restaurants in Seattle. Bui
 ## Data sources
 - Restaurant locations: manually collected
 - Basemaps: Mapbox
-- Images: Unsplash / personal photos (replace with your own)
+- Images: Unsplash / personal photos
 
 ## Repository structure
