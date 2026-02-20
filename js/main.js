@@ -105,7 +105,9 @@ function initMap() {
         center: [-122.3321, 47.6062],
         zoom: 11,
         pitch: 0,
-        scrollZoom: false,   
+        scrollZoom: false,
+        cooperativeGestures: true,
+        touchZoomRotate: false,
         dragPan: true,      
         dragRotate: false    
     });
