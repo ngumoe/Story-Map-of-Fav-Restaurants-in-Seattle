@@ -113,7 +113,7 @@ html, body {
 }
 
 .scene:first-child {
-    margin-top: 10vh;            /* start below cover */
+    margin-top: 20vh;            /* start below cover */
 }
 
 .scene:last-child {
