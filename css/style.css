@@ -105,13 +105,15 @@ html, body {
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     border-left: 6px solid #d4a373; /* accent color */
-    margin-bottom: 70vh;         /* space between scenes */
+    margin-bottom: 10vh;         /* space between scenes */
     transition: transform 0.3s;
     color: #2c3e50;              /* dark text for contrast */
+    z-index: 100;               /* force above map */
+    background: red !important;  /* temporary – bright red */
 }
 
 .scene:first-child {
-    margin-top: 20vh;            /* start below cover */
+    margin-top: 10vh;            /* start below cover */
 }
 
 .scene:last-child {
