@@ -104,7 +104,10 @@ function initMap() {
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [-122.3321, 47.6062],
         zoom: 11,
-        pitch: 0
+        pitch: 0,
+        scrollZoom: false,   
+        dragPan: true,      
+        dragRotate: false    
     });
 
     map.on('load', () => {
