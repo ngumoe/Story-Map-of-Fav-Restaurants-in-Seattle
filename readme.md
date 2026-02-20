@@ -2,7 +2,7 @@
 
 An interactive geo‑narrative exploring my favorite restaurants in Seattle. Built with Mapbox GL JS and Scrollama for the UW Geography Lab 07.
 
-🔗 **Live map:** [https://yourusername.github.io/seattle-restaurant-storymap](https://yourusername.github.io/seattle-restaurant-storymap)
+🔗 **Live map:** [https://ngumoe.github.io/GeoNarrative/](https://ngumoe.github.io/GeoNarrative/)
 
 ## Features
 - Full‑screen cover with background image
