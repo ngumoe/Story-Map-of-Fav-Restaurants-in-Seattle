@@ -1,12 +1,11 @@
+
 // 1. Set Mapbox access token (REPLACE WITH YOUR OWN)
 mapboxgl.accessToken = 'pk.eyJ1IjoidmFtaWthZ29lbCIsImEiOiJjbWx1Y2R6a24wNXR3M2ZxbmJqZTM5dm5xIn0.EBko8Qe2Q7TVmozPuaC6AQ';
 
 // 2. Declare global variables
 let map;
 let scriptPanel = scrollama();
-let restaurantsGeoJSON; // will hold the feature collection
-
-// 3. Restaurant data (GeoJSON)
+let currentPopup = null; // track the open popup
 const restaurantsData = {
     type: "FeatureCollection",
     features: [
@@ -16,7 +15,8 @@ const restaurantsData = {
                 name: "Pike Place Chowder",
                 address: "1530 Post Aly, Seattle, WA 98101",
                 cuisine: "Seafood",
-                scene: 0
+                scene: 0,
+                image: "pike_place_chowder.jpg"
             },
             geometry: {
                 type: "Point",
@@ -29,7 +29,8 @@ const restaurantsData = {
                 name: "Canlis",
                 address: "2576 Aurora Ave N, Seattle, WA 98109",
                 cuisine: "Fine Dining",
-                scene: 1
+                scene: 1,
+                image: "canlis.jpg"
             },
             geometry: {
                 type: "Point",
@@ -42,7 +43,8 @@ const restaurantsData = {
                 name: "Toulouse Petit",
                 address: "601 Queen Anne Ave N, Seattle, WA 98109",
                 cuisine: "Creole",
-                scene: 2
+                scene: 2,
+                image: "toulouse_petit.jpg"
             },
             geometry: {
                 type: "Point",
@@ -55,7 +57,8 @@ const restaurantsData = {
                 name: "Salumi",
                 address: "309 3rd Ave S, Seattle, WA 98104",
                 cuisine: "Italian Sandwiches",
-                scene: 3
+                scene: 3,
+                image: "salumi.jpg"
             },
             geometry: {
                 type: "Point",
@@ -68,7 +71,8 @@ const restaurantsData = {
                 name: "Molly Moon's",
                 address: "917 E Pine St, Seattle, WA 98122",
                 cuisine: "Ice Cream",
-                scene: 4
+                scene: 4,
+                image: "molly_moons.jpg"
             },
             geometry: {
                 type: "Point",
@@ -78,23 +82,36 @@ const restaurantsData = {
     ]
 };
 
-// 4. Initialize map
+// Helper to generate popup HTML
+function getPopupContent(index) {
+    const restaurant = restaurantsData.features.find(f => f.properties.scene === index);
+    if (!restaurant) return '';
+    const props = restaurant.properties;
+    return `
+        <div style="text-align: center; max-width: 200px;">
+            <img src="img/${props.image}" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px;" alt="${props.name}">
+            <h3 style="margin: 5px 0; font-size: 1.1rem;">${props.name}</h3>
+            <p style="margin: 3px 0; font-style: italic;">${props.cuisine}</p>
+            <p style="margin: 3px 0; font-size: 0.9rem;">${props.address}</p>
+        </div>
+    `;
+}
+
+// Initialize map
 function initMap() {
     map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11', // default style
-        center: [-122.3321, 47.6062], // downtown Seattle
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-122.3321, 47.6062],
         zoom: 11,
         pitch: 0
     });
 
     map.on('load', () => {
-        // Add a custom marker image (optional: use an image from Mapbox or a local URL)
         map.loadImage('https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png', (error, image) => {
             if (error) throw error;
             map.addImage('custom-marker', image);
 
-            // Add source and layer for restaurants
             map.addSource('restaurants', {
                 type: 'geojson',
                 data: restaurantsData
@@ -121,50 +138,47 @@ function initMap() {
             });
         });
 
-        // Initially hide all points (we'll show them per scene)
+        // Initially hide all points
         map.setLayoutProperty('restaurant-points', 'visibility', 'none');
     });
 }
 
-// 5. Adjust storyboard size (for responsive)
-function adjustStoryboardSize() {
-    // no extra needed
-}
-
-// 6. Scrollama setup
+// Scrollama setup
 function setupScrollama() {
     scriptPanel
         .setup({
             step: '.scene',
-            offset: 0.5,      // trigger when middle of step enters viewport
+            offset: 0.5,
             debug: false
         })
         .onStepEnter(handleSceneEnter)
         .onStepExit(handleSceneExit);
 }
 
-// 7. Handle scene enter
+// Handle scene enter
 function handleSceneEnter(response) {
     const index = response.index;
 
-    // Hide cover when scrolling down past scene 0
     if (index === 0) {
         document.getElementById('cover').style.visibility = 'hidden';
     }
 
-    // Show the corresponding restaurant marker (if not already visible)
-    // We'll filter the GeoJSON to show only the point for this scene
+    // Remove any existing popup
+    if (currentPopup) {
+        currentPopup.remove();
+        currentPopup = null;
+    }
+
     const allFeatures = restaurantsData.features;
     const currentFeature = allFeatures.find(f => f.properties.scene === index);
     if (!currentFeature) return;
 
-    // Create a temporary GeoJSON with just this feature
+    // Show only this marker
     const singleFeatureCollection = {
         type: 'FeatureCollection',
         features: [currentFeature]
     };
 
-    // Update source data
     if (map.getSource('restaurants')) {
         map.getSource('restaurants').setData(singleFeatureCollection);
         map.setLayoutProperty('restaurant-points', 'visibility', 'visible');
@@ -174,20 +188,30 @@ function handleSceneEnter(response) {
     map.flyTo({
         center: currentFeature.geometry.coordinates,
         zoom: 15,
-        pitch: 30,            // slight tilt for effect
+        pitch: 30,
         bearing: 0,
         speed: 0.6,
         curve: 1
     });
 
-    // Optionally change map style for a specific scene (demonstrate different map)
+    // Create and open popup
+    const popupContent = getPopupContent(index);
+    currentPopup = new mapboxgl.Popup({
+        offset: 25,
+        closeButton: true,
+        closeOnClick: false,
+        anchor: 'bottom'
+    })
+        .setLngLat(currentFeature.geometry.coordinates)
+        .setHTML(popupContent)
+        .addTo(map);
+
+    // Change map style for specific scenes (optional)
     if (index === 1) {
         map.setStyle('mapbox://styles/mapbox/light-v11');
     } else if (index === 3) {
         map.setStyle('mapbox://styles/mapbox/satellite-streets-v11');
     } else {
-        // Revert to default style for others (if changed)
-        // But avoid resetting unnecessarily
         const currentStyle = map.getStyle().name;
         if (currentStyle !== 'Streets' && index !== 1 && index !== 3) {
             map.setStyle('mapbox://styles/mapbox/streets-v11');
@@ -195,28 +219,27 @@ function handleSceneEnter(response) {
     }
 }
 
-// 8. Handle scene exit
+// Handle scene exit
 function handleSceneExit(response) {
     const index = response.index;
 
     if (index === 0 && response.direction === 'up') {
-        // Scrolling back up to cover
         document.getElementById('cover').style.visibility = 'visible';
     }
 
-    // Hide markers when exiting the scene (optional)
-    // We could remove all markers, but we'll just hide them
+    // Hide marker and remove popup
     if (map.getLayer('restaurant-points')) {
         map.setLayoutProperty('restaurant-points', 'visibility', 'none');
     }
+    if (currentPopup) {
+        currentPopup.remove();
+        currentPopup = null;
+    }
 }
 
-// 9. Initialize everything when DOM ready
+// Initialize on load
 window.addEventListener('load', () => {
     initMap();
     setupScrollama();
-    adjustStoryboardSize();
-
-    // Add resize listener
-    window.addEventListener('resize', adjustStoryboardSize);
+    window.addEventListener('resize', () => {}); // no extra logic needed
 });
